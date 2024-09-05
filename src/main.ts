@@ -1,9 +1,11 @@
 /// <reference types="@angular/localize" />
 
-import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
-import {AppModule} from "./app/app.module";
+import { customBootstrapApplication } from "./custom-bootstrap-application.function";
 
-
-platformBrowserDynamic()
-  .bootstrapModule(AppModule)
-  .catch((err: any) => console.error(err));
+void (function bootstrapApp(): void {
+  try {
+    customBootstrapApplication().catch(err => console.error(err));
+  } catch (err) {
+    console.error('environment.json NOT loaded', err);
+  }
+})();
