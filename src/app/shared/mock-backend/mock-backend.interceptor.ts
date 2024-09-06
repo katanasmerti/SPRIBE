@@ -1,7 +1,7 @@
 import {HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Injectable} from "@angular/core";
 import {delay, Observable, of, tap} from "rxjs";
-import {CheckUserResponseData, SubmitFormResponseData} from "../interface/responses";
+import {CheckUserResponseData, SubmitFormResponseData} from "../models/responses";
 
 @Injectable()
 export class MockBackendInterceptor implements HttpInterceptor {

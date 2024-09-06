@@ -1,23 +1,60 @@
-<div class="card p-3" style="width: 18rem;">
-  <i class="bi bi-x close-icon fs-6"></i>
+<div class="card user-form p-3">
+  <button type="button" class="btn-close close-icon" (click)="onClose()"></button>
 
-  <div class="mb-3">
+  <!-- Country Input -->
+
+  <div class="mb-4">
     <label for="country" class="form-label">Country</label>
-    <input type="email" class="form-control" id="country">
+    <input
+      type="text"
+      class="form-control"
+      id="country"
+      list="countries"
+      placeholder="Enter country"
+      appValidationMessage="Please provide a correct Country"
+      [formControl]="internalForm.controls.country"
+      (blur)="internalForm.controls.country.updateValueAndValidity()"
+    >
+
+    <!-- Options for autosuggest list -->
+
+    <datalist *ngIf="filteredOptions.length" id="countries">
+      <option *ngFor="let country of filteredOptions" [value]="country">
+        {{ country }}
+      </option>
+    </datalist>
   </div>
 
-  <div class="mb-3">
+  <!-- Username input -->
+
+  <div class="mb-4">
     <label for="username" class="form-label">Username</label>
-    <input type="password" class="form-control" id="username">
+    <input
+      type="text"
+      class="form-control"
+      id="username"
+      placeholder="Enter username"
+      appValidationMessage="Please provide a correct Username"
+      [formControl]="internalForm.controls.userName"
+      (blur)="internalForm.controls.userName.updateValueAndValidity()"
+    >
   </div>
 
-  <div class="mb-3">
+    <!-- Birthday input -->
+
+  <div class="mb-4">
     <label for="birthday" class="form-label">Birthday</label>
-    <input type="password" class="form-control" id="birthday">
+    <input
+      #dateInput
+      type="date"
+      class="form-control"
+      id="birthday"
+      placeholder="dd.mm.yyyy"
+      appValidationMessage="Please provide a correct Date"
+      [min]="dateRange.min"
+      [max]="dateRange.max"
+      [formControl]="internalForm.controls.birthday"
+      (blur)="internalForm.controls.birthday.updateValueAndValidity()"
+    >
   </div>
 </div>
-
-
-
-
-

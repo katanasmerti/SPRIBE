@@ -1,0 +1,18 @@
+.add-area {
+  border-style: dashed;
+  max-width: 18rem;
+  min-width: 18rem;
+  min-height: 292px;
+  border: 2px dashed #ccc;
+  background: linear-gradient(135deg, #eeeeee, #eeeeee);
+  cursor: pointer;
+}
+
+.plus-container {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 2px dashed #007bff;
+}

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UserListComponent } from './feature-users-list/feature-users-list.component';
 
 @Component({
@@ -6,7 +6,8 @@ import { UserListComponent } from './feature-users-list/feature-users-list.compo
   standalone: true,
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
 }
