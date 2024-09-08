@@ -7,7 +7,7 @@ export class UserFactory {
       country: country,
       userName: userName,
       birthday: birthday,
-      id: crypto.randomUUID(),
+      internalId: Date.now().toString(),
     };
   }
 }

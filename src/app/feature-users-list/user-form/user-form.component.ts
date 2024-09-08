@@ -1,12 +1,11 @@
 import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, forwardRef, inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { ControlValueAccessor, FormBuilder, FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { Country } from '../../shared/models/country';
 import { ValidationMessageDirective } from '../../shared/directives/validation-message.directive';
+import { UserFormService } from '../user-form.service';
 import { IUserForm } from '../../shared/models/user-form.interface';
-import { buildDateRange } from '../../shared/utils/build-date-range.function';
-import { dateValidator } from '../../shared/utils/date-validator.function';
 
 @Component({
   standalone: true,
@@ -15,58 +14,52 @@ import { dateValidator } from '../../shared/utils/date-validator.function';
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => UserFormComponent),
-      multi: true
-    },
-  ],
 })
-export class UserFormComponent implements OnInit, OnDestroy, ControlValueAccessor  {
+export class UserFormComponent implements OnInit {
   @Input({required: true})
-  public userNumber!: number;
+  public userIndex!: number;
 
-  @Output()
-  public closeForm = new EventEmitter<number>();
+  @Input({required: true})
+  public userForm!: FormGroup<IUserForm>;
 
-  @ViewChild('#dateInput')
-  public readonly dateInput?: HTMLInputElement;
+  @Input()
+  public isDisabled = false;
 
-  private readonly fb = inject(FormBuilder);
-
-  protected readonly dateRange = buildDateRange();
-
-  protected readonly internalForm = this.fb.group<IUserForm>({
-    birthday: new FormControl<Date | null>(null, [Validators.required, dateValidator(this.dateRange.min, this.dateRange.max)]),
-    country: new FormControl<Country | null>(null, Validators.required),
-    userName: new FormControl<string | null>(null, [Validators.required, Validators.minLength(3)]),
-  });
-
-  // Control Value Accessor implementation.
-  public registerOnChange(fn: any): void {}
-  public registerOnTouched(fn: any): void {}
-  public writeValue(value: any): void {
-    if (value) {
-      this.internalForm.patchValue(value, { emitEvent: false });
-    }
-  }
+  protected readonly userFormService = inject(UserFormService);
 
   private readonly destroy$ = new Subject<void>();
 
   protected readonly options: Country[] = Object.values(Country);
+
   protected filteredOptions: string[] = [];
   protected isOptionVisible = false;
 
   public ngOnInit(): void {
-    this.internalForm.controls.birthday.valueChanges.pipe().subscribe(() => {
-      console.log(this.internalForm);
+    this.initValidationTriggerSubscription();
+    this.initCountryValueChangedSubscription();
+  }
 
-      console.log(this.internalForm.controls.country.touched);
-      console.log(this.internalForm.controls.country.valid);
+  public ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  protected onClose(): void {
+    this.userFormService.removeUserForm(this.userIndex);
+  }
+
+  // Update value and validity for each control after form submit event.
+  private initValidationTriggerSubscription(): void {
+    this.userFormService.validationTriggered$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      Object.keys(this.userForm.controls).forEach((key) => {
+        this.userForm.controls[key as keyof IUserForm].updateValueAndValidity();
+      });
     });
+  }
 
-    this.internalForm.controls.country.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+  // Handle country control value change to build autosuggest options list.
+  private initCountryValueChangedSubscription(): void {
+    this.userForm.controls.country.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
       if (value) {
         this.filteredOptions = this.options.filter(option =>
           option.toLowerCase().includes(value.toLowerCase())
@@ -77,14 +70,5 @@ export class UserFormComponent implements OnInit, OnDestroy, ControlValueAccesso
 
       this.isOptionVisible = this.filteredOptions.length > 0;
     });
-  }
-
-  public ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  protected onClose(): void {
-    this.closeForm.emit(this.userNumber);
   }
 }

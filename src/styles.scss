@@ -2,3 +2,8 @@
 
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
+
+.disabled-area {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+}

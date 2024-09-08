@@ -1,23 +1,53 @@
 <div class="p-3 border border-dark">
 
-  <!-- Submit button -->
+  <!-- Toolbar -->
 
-  <button type="button" class="btn btn-primary mb-3" (click)="submit()">Submit all forms</button>
+  <div class="d-flex align-items-center mb-3">
+    <ng-container *ngIf="!isTimerVisible()">
+      <button
+        type="button"
+        class="btn btn-primary mr-3"
+        [disabled]="userFormService.invalidControlsAmount"
+        (click)="submit()"
+      >
+        Submit all forms
+      </button>
 
-  <div formArrayName="usersList"  class="d-flex gap-3 align-items-stretch flex-wrap">
+      <div
+        *ngIf="userFormService.invalidControlsAmount"
+        class="danger-area alert alert-danger mb-0 mx-1"
+      >
+        {{ invalidFormsMessage }}
+      </div>
+    </ng-container>
 
-    <!-- User forms -->
+
+    <ng-container *ngIf="isTimerVisible()">
+      <button class="btn btn-danger" (click)="cancel()">Cancel</button>
+      <div class="danger-area alert alert-danger mb-0 mx-1">{{ countdownMessage() }}</div>
+    </ng-container>
+  </div>
+
+
+  <div class="d-flex gap-3 align-items-stretch flex-wrap">
+
+    <!-- User forms list -->
 
     <user-form
-      *ngFor="let user of usersList; let i = index"
-      [(ngModel)]="usersList[i]"
-      [userNumber]="i"
-      (closeForm)="onCloseForm($event)"
+      *ngFor="let userForm of userFormService.userFromList.controls; let i = index; trackBy: trackByInternalId"
+      [userForm]="userForm"
+      [userIndex]="i"
+      [isDisabled]="isTimerVisible()"
     />
 
     <!-- Add button -->
 
-    <button class="add-area rounded d-flex justify-content-center align-items-center" (click)="addUser()">
+    <button
+      class="add-area rounded d-flex justify-content-center align-items-center"
+      [class.disabled-area]="isTimerVisible()"
+      [disabled]="isTimerVisible()"
+      (click)="userFormService.addUserForm()"
+    >
       <div class="plus-container">
         <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#007bff" class="bi bi-plus" viewBox="0 0 17 15">
           <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>

@@ -1,10 +1,23 @@
+@keyframes gradient {
+  0% {
+      background-position: 20% 10%;
+  }
+  50% {
+      background-position: 40% 50%;
+  }
+  100% {
+      background-position: 20% 10%;
+  }
+}
+
 .add-area {
   border-style: dashed;
-  max-width: 18rem;
-  min-width: 18rem;
-  min-height: 292px;
+  width: 18rem;
+  min-height: 316px;
   border: 2px dashed #ccc;
-  background: linear-gradient(135deg, #eeeeee, #eeeeee);
+  background: linear-gradient(90deg, rgb(65, 65, 65) 0%, rgb(255, 255, 255) 42% 100%);
+  animation: gradient 5s infinite linear;
+  background-size: 500%;
   cursor: pointer;
 }
 
@@ -15,4 +28,8 @@
   display: grid;
   place-items: center;
   border: 2px dashed #007bff;
+}
+
+.danger-area {
+  padding: 0.35rem 0.75rem;
 }

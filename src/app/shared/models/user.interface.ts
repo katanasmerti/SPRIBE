@@ -5,5 +5,6 @@ export interface IUser {
   country: Country | null;
   userName: string | null;
   birthday: Date | null;
-  id: string;
+  // Used for track by function to prevent unnecessary render operations.
+  internalId: string;
 }

@@ -6,10 +6,10 @@ import {CheckUserResponseData, SubmitFormResponseData} from "../models/responses
 @Injectable()
 export class MockBackendInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpResponse<CheckUserResponseData | SubmitFormResponseData>> {
-
     if (req.url.endsWith('/api/checkUsername') && req.method === 'POST') {
       return this.handleCheckUsername(req);
     }
+
     if (req.url.endsWith('/api/submitForm') && req.method === 'POST') {
       return this.handleSubmitForm();
     }

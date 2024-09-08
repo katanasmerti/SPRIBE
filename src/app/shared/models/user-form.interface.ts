@@ -5,4 +5,5 @@ export interface IUserForm {
   country: FormControl<Country | null>;
   userName: FormControl<string | null>;
   birthday: FormControl<Date | null>;
+  internalId: FormControl<string>;
 }
