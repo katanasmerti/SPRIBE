@@ -3,6 +3,8 @@
 
   <button type="button" class="btn-close close-icon" [disabled]="isDisabled" (click)="onClose()"></button>
 
+  <!-- End Close button -->
+
   <!-- Country Input -->
 
   <div class="mb-4">
@@ -24,7 +26,11 @@
         {{ country }}
       </option>
     </datalist>
+
+    <!-- End Options for country autosuggest list -->
   </div>
+
+  <!-- End Country Input -->
 
   <!-- Username input -->
 
@@ -39,6 +45,8 @@
       [formControl]="userForm.controls.userName"
     >
   </div>
+
+  <!-- End Username input -->
 
   <!-- Birthday input -->
 
@@ -56,4 +64,6 @@
       [formControl]="userForm.controls.birthday"
     >
   </div>
+
+  <!-- End Birthday input -->
 </fieldset>

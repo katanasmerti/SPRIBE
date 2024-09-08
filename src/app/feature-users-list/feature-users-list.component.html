@@ -23,10 +23,12 @@
 
 
     <ng-container *ngIf="isTimerVisible()">
-      <button class="btn btn-danger" (click)="cancel()">Cancel</button>
+      <button class="btn btn-danger" (click)="cancelRequest()">Cancel</button>
       <div class="danger-area alert alert-danger mb-0 mx-1">{{ countdownMessage() }}</div>
     </ng-container>
   </div>
+
+  <!-- End Toolbar -->
 
 
   <div class="d-flex gap-3 align-items-stretch flex-wrap">
@@ -40,19 +42,30 @@
       [isDisabled]="isTimerVisible()"
     />
 
+    <!-- End User forms list -->
+
     <!-- Add button -->
 
     <button
       class="add-area rounded d-flex justify-content-center align-items-center"
-      [class.disabled-area]="isTimerVisible()"
-      [disabled]="isTimerVisible()"
+      [class.disabled-area]="isAddButtonDisabled()"
+      [disabled]="isAddButtonDisabled()"
       (click)="userFormService.addUserForm()"
     >
       <div class="plus-container">
-        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#007bff" class="bi bi-plus" viewBox="0 0 17 15">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="50"
+          height="50"
+          fill="#007bff"
+          class="bi bi-plus"
+          viewBox="0 0 17 15"
+        >
           <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
         </svg>
       </div>
     </button>
+
+    <!-- End Add button -->
   </div>
 </div>

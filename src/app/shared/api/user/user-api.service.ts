@@ -1,8 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
-import { CheckUserResponseData, SubmitFormResponseData } from "../../models/responses";
 import { IUser } from "../../models/user.interface";
+import { CheckUserResponseData } from "../../models/check-user-response-data.interface";
+import { SubmitFormResponseData } from "../../models/submit-form-response-data.interface";
 
 @Injectable({
   providedIn: 'root'

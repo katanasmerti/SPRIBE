@@ -1,5 +1,4 @@
-import { FormControl } from "@angular/forms";
-import { Country } from "./country";
+import { Country } from "./country.enum";
 
 export interface IUser {
   country: Country | null;

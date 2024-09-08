@@ -6,6 +6,7 @@ import { FormGroup, FormsModule } from '@angular/forms';
 import { merge, timer, takeUntil, switchMap, Subject, of } from 'rxjs';
 import { UserApiService } from '../shared/api/user/user-api.service';
 import { IUserForm } from '../shared/models/user-form.interface';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -19,10 +20,14 @@ export class UserListComponent {
   private readonly userApiService = inject(UserApiService);
   protected readonly userFormService = inject(UserFormService);
 
-  private countdown = signal(5);
+  private static readonly INITIAL_TIMER = 5;
 
-  protected countdownMessage = computed(() => `0:0${this.countdown()}`);
+  private countdown = signal(UserListComponent.INITIAL_TIMER);
+  private usersAmount = toSignal(this.userFormService.usersAmount$);
+
   protected isTimerVisible = signal(false);
+  protected countdownMessage = computed(() => `0:0${this.countdown()}`);
+  protected isAddButtonDisabled = computed(() => Number(this.usersAmount()) === 10 || this.isTimerVisible());
 
   private readonly cancel$ = new Subject<void>();
   private readonly destroy$ = new Subject<void>();
@@ -33,7 +38,9 @@ export class UserListComponent {
     return amount ? `Invalid forms: ${amount}` : null;
   }
 
-  protected readonly trackByInternalId = (index: number, userForm: FormGroup<IUserForm>): string => userForm.getRawValue().internalId;
+  protected readonly trackByInternalId = (index: number, userForm: FormGroup<IUserForm>): string => {
+    return userForm.getRawValue().internalId;
+  };
 
   protected submit(): void {
     if (!this.userFormService.userFromList.valid) {
@@ -47,18 +54,20 @@ export class UserListComponent {
     this.fireDelayedRequest();
   }
 
-  protected cancel(): void {
+  // Cancel timer subscription and refresh countdown.
+  protected cancelRequest(): void {
     this.cancel$.next();
-    this.countdown.set(5);
+    this.countdown.set(UserListComponent.INITIAL_TIMER);
     this.isTimerVisible.set(false);
   }
 
+  // Runs Timer and fire request after 5000 ms.
   private fireDelayedRequest(): void {
     const stop$ = merge(this.cancel$, this.destroy$);
 
-    timer(0, 1000).pipe(
+    timer(0, 1_000).pipe(
       switchMap((tick) => {
-        this.countdown.set(5 - tick);
+        this.countdown.set(UserListComponent.INITIAL_TIMER - tick);
 
         if (!this.countdown()) {
           this.isTimerVisible.set(true);
@@ -72,7 +81,7 @@ export class UserListComponent {
     ).subscribe((response) => {
       if (response?.result) {
         this.userFormService.resetForm();
-        this.cancel();
+        this.cancelRequest();
       }
     });
   }

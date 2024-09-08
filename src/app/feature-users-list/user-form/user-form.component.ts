@@ -2,7 +2,7 @@ import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { Country } from '../../shared/models/country';
+import { Country } from '../../shared/models/country.enum';
 import { ValidationMessageDirective } from '../../shared/directives/validation-message.directive';
 import { UserFormService } from '../user-form.service';
 import { IUserForm } from '../../shared/models/user-form.interface';
@@ -48,7 +48,7 @@ export class UserFormComponent implements OnInit {
     this.userFormService.removeUserForm(this.userIndex);
   }
 
-  // Update value and validity for each control after form submit event.
+  // Update value and validity for each control inside group after form submit event triggered.
   private initValidationTriggerSubscription(): void {
     this.userFormService.validationTriggered$.pipe(takeUntil(this.destroy$)).subscribe(() => {
       Object.keys(this.userForm.controls).forEach((key) => {

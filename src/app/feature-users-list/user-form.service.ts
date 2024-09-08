@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { AsyncValidatorFn, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Country } from '../shared/models/country';
+import { Country } from '../shared/models/country.enum';
 import { IUserForm } from '../shared/models/user-form.interface';
-import { catchError, debounceTime, first, map, of, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, debounceTime, first, map, of, Subject, switchMap } from 'rxjs';
 import { dateValidator } from '../shared/utils/date-validator.function';
 import { buildDateRange } from '../shared/utils/build-date-range.function';
 import { countryValidator } from '../shared/utils/country-validator.function';
@@ -14,6 +14,12 @@ import { UserApiService } from '../shared/api/user/user-api.service';
 export class UserFormService {
   private readonly fb = inject(FormBuilder);
   private readonly userApiService = inject(UserApiService);
+
+  private readonly userFormsAmount$ = new BehaviorSubject<number>(1);
+  private readonly triggerFormsValidation$ = new Subject<void>();
+
+  public readonly usersAmount$ = this.userFormsAmount$.asObservable();
+  public readonly validationTriggered$ = this.triggerFormsValidation$.asObservable();
 
   public readonly usernameValidator: AsyncValidatorFn = control =>
     of(control.value).pipe(
@@ -42,15 +48,13 @@ export class UserFormService {
 
   public addUserForm(): void {
     this.userFromList.push(this.createUserForm());
+    this.userFormsAmount$.next(this.userFromList.length);
   }
 
   public removeUserForm(index: number): void {
     this.userFromList.removeAt(index);
+    this.userFormsAmount$.next(this.userFromList.length);
   }
-
-  private triggerFormsValidation$ = new Subject<void>();
-
-  public validationTriggered$ = this.triggerFormsValidation$.asObservable();
 
   public triggerValidation(): void {
     this.triggerFormsValidation$.next();
@@ -61,7 +65,7 @@ export class UserFormService {
       birthday: this.fb.control<Date | null>(null, {validators: [Validators.required, dateValidator(this.dateRange.min, this.dateRange.max)]}),
       userName: this.fb.control<string | null>(null, {validators: [Validators.required], asyncValidators: [this.usernameValidator]}),
       country: this.fb.control<Country | null>(null, {validators: [Validators.required, countryValidator()]}),
-      internalId: this.fb.nonNullable.control(Date.now().toString()),
+      internalId: this.fb.nonNullable.control({value: Date.now().toString(), disabled: true},),
     });
   }
 

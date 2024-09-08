@@ -1,13 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { UserListComponent } from './feature-users-list/feature-users-list.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [UserListComponent],
+  imports: [RouterOutlet],
   standalone: true,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {
-}
+export class AppComponent {}
